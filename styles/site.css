@@ -345,7 +345,7 @@ body::after {
 .nav-toggle { display: none; }
 
 /* the hamburger is for phones and portrait tablets only; from 1024px the full nav shows (compacted
-   below 1340px - see "Desktop nav tiers" at the end of this file) */
+   below 1440px - see "Desktop nav tiers" at the end of this file) */
 @media (max-width: 1023px) {
   .nav, .header-cta .btn { display: none; }
   .nav-toggle { display: inline-grid; }
@@ -918,7 +918,7 @@ h2.eyebrow { font-size: .78rem; font-weight: 700; letter-spacing: .16em; line-he
 /* V4: the hero visual needs a real width once it drops below the copy */
 @media (max-width: 980px) { .page-hero__visual { width: min(320px, 60%); min-height: 180px; } }
 /* V5 (revised on owner feedback): every desktop width shows the full nav; it is compacted to fit its
-   pill below 1340px instead of collapsing to the hamburger (see "Desktop nav tiers" at the end) */
+   pill below 1440px instead of collapsing to the hamburger (see "Desktop nav tiers" at the end) */
 /* V6: the fixed back-to-top button never sits on the footer's last row */
 .footer__bar { padding-right: 76px; }
 /* V8/V10: at tablet widths parallax travel is damped on elements that sit next to text */
@@ -1012,8 +1012,11 @@ h2.eyebrow { font-size: .78rem; font-weight: 700; letter-spacing: .16em; line-he
 
 /* ======================= Desktop nav tiers (owner feedback: no hamburger on desktop) =======================
    Measured (tmp/navhero/fit.mjs): the full row needs 1252px of pill at base size. Two compaction tiers keep
-   the nav, the appointment button and the phone button in one row from 1024px up. */
-@media (min-width: 1024px) and (max-width: 1339px) {
+   the nav, the appointment button and the phone button in one row from 1024px up.
+   2026-10-02: with a dropdown toggle on all six items (mega menus) the base row needs ~1330px of pill, which
+   only the capped 1340px pill gives (viewport >= 1440); measured overflow was 50px at 1340 and 22px at 1240,
+   so the compact tier now runs to 1439px and the icon-only button to 1299px. */
+@media (min-width: 1024px) and (max-width: 1439px) {
   .nav-shell { gap: 10px; padding-left: 18px; }
   .brand img { width: 108px; }
   .site-header.is-scrolled .brand img { width: 100px; }
@@ -1021,9 +1024,9 @@ h2.eyebrow { font-size: .78rem; font-weight: 700; letter-spacing: .16em; line-he
   .menu > li > a::after { left: 8px; right: 8px; }
   .submenu-toggle { width: 24px; height: 30px; margin-left: -7px; }
 }
-/* below 1240px the appointment button keeps its calendar icon and accessible name, and shows its label as a
+/* below 1300px the appointment button keeps its calendar icon and accessible name, and shows its label as a
    tooltip on hover/focus; the gutter narrows so the row keeps real breathing room */
-@media (min-width: 1024px) and (max-width: 1239px) {
+@media (min-width: 1024px) and (max-width: 1299px) {
   .site-header { padding-inline: 16px; }
   .menu a, .menu__parent { font-size: .86rem; padding: 10px 6px; }
   .header-cta .btn { position: relative; width: 48px; height: 48px; padding: 0; justify-content: center; border-radius: 50%; }
@@ -1309,10 +1312,10 @@ h2.eyebrow { font-size: .78rem; font-weight: 700; letter-spacing: .16em; line-he
 /* TV-02: the generated lens-disc cut-out is lilac/violet; turned to the rose family in CSS (file untouched) */
 img[src*="cut-lens-disc"] { filter: hue-rotate(58deg) saturate(.85); }
 
-/* TV-01/F1: the icon-only header button (1024-1239) clipped its own tooltip (.btn is overflow:hidden); the
+/* TV-01/F1: the icon-only header button (1024-1299) clipped its own tooltip (.btn is overflow:hidden); the
    tooltip is unclipped and on-theme, and the sweep band (which would leak outside the circle) is off there -
    the metal still glimmers through its sliding reflection */
-@media (min-width: 1024px) and (max-width: 1239px) {
+@media (min-width: 1024px) and (max-width: 1299px) {
   .header-cta .btn { overflow: visible; }
   .header-cta .btn::before { display: none; }
   .header-cta .btn::after { background: var(--paper); color: var(--ink); border: 1px solid var(--rg-300); box-shadow: var(--shade-1); }
@@ -1422,3 +1425,53 @@ img[src*="cut-lens-disc"] { filter: hue-rotate(58deg) saturate(.85); }
    last quick action; it only receives the pointer while shown */
 .totop { pointer-events: none; }
 .totop.is-shown { pointer-events: auto; }
+
+/* ======================= Mega menus (2026-10-02) =======================
+   Eye Care Services and Eyeglasses open as wide panels under the whole header pill; the other items keep
+   the simple dropdown. Both open and close by the .submenu rules above (hover, keyboard focus, the toggle
+   button). The wide panels are opaque white-to-blush like the drawer: translucent glass let the hero film
+   show through behind a large block of links. */
+.menu > li.has-mega { position: static;}
+.mega {
+  left: 0; right: 0; top: calc(100% + 10px); min-width: 0; padding: 22px 22px 16px;
+  display: grid; gap: 16px; transform-origin: top center;
+  background: linear-gradient(165deg, var(--paper), var(--rg-50) 70%, var(--rg-100));
+  -webkit-backdrop-filter: none; backdrop-filter: none;}
+.mega::before { top: -22px; height: 22px;}   /* hover bridge across the gap under the pill */
+.mega__grid { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 14px 24px;}
+.mega__grid--2 { grid-template-columns: repeat(2, minmax(0, 1fr));}
+.mega__group { min-width: 0;}
+.mega__title { margin: 0 0 4px;}
+.mega ul { list-style: none; margin: 0; padding: 0; display: grid; gap: 1px;}
+.mega a {
+  display: flex; width: 100%; padding: 8px 12px; border-radius: 12px;
+  font-size: .9rem; line-height: 1.3; white-space: normal; color: var(--ink);}
+.mega .mega__title a { font-size: .74rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--rg-800); padding-block: 6px;}
+.mega a:hover, .mega a:focus-visible, .mega a[aria-current="page"] { background: var(--rg-100); color: var(--rg-900);}
+.mega__foot { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 12px 12px 0; border-top: 1px solid var(--rg-200);}
+.mega__foot p { margin: 0; font-size: .88rem; color: var(--text-soft);}
+.mega .mega__foot p a { display: inline; width: auto; padding: 0; border-radius: 0; background: none; color: var(--rg-800); font-weight: 700; text-decoration: underline; text-underline-offset: 2px;}
+.mega .mega__all { width: auto; flex: none; gap: 8px; font-weight: 700; color: var(--rg-800); padding: 8px 14px; border-radius: var(--r-pill); border: 1px solid var(--rg-300);}
+.mega .mega__all svg { width: 16px; height: 16px;}
+.mega__split { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 24px; align-items: start;}
+.mega__cards { display: grid; grid-template-columns: repeat(4, 128px); gap: 12px;}
+.mega .mega-card {
+  display: grid; gap: 6px; justify-items: center; align-content: start; padding: 10px 10px 12px; border-radius: 18px; text-align: center;
+  background: linear-gradient(160deg, var(--paper), var(--rg-100)); border: 1px solid var(--rg-200);
+  transition: transform .35s var(--ease-spring), box-shadow .35s var(--ease), background .35s var(--ease);}
+.mega .mega-card:hover, .mega .mega-card:focus-visible { transform: translateY(-3px); box-shadow: var(--shade-2); background: linear-gradient(160deg, var(--paper), var(--rg-200));}
+.mega-card__pic { display: grid; place-items: center; width: 100%; aspect-ratio: 4 / 3; min-height: 0; overflow: hidden;}
+.mega-card__pic img { width: 100%; height: 100%; object-fit: contain;}
+.mega-card__label { font-size: .85rem; font-weight: 700; line-height: 1.2;}
+/* Escape, or the toggle pressed on an open item, closes it even while focus is still inside (focus-within and
+   hover would otherwise hold it open); site.js clears .is-closed once both focus and pointer have left */
+.has-children.is-closed > .submenu { opacity: 0; visibility: hidden; transform: translateY(8px) scale(.98); transition: opacity .3s var(--ease), transform .35s var(--ease), visibility 0s linear .35s;}
+.has-children.is-closed .submenu-toggle svg { transform: none;}
+/* the two right-most dropdowns open toward the right edge, so they never run past the pill */
+.menu > li:nth-last-child(-n+2) > .submenu:not(.mega) { left: auto; right: 0; transform-origin: top right;}
+@media (min-width: 1024px) and (max-width: 1299px) {
+  .mega { padding: 18px 16px 14px;}
+  .mega__grid { gap: 10px 14px;}
+  .mega a { font-size: .86rem; padding: 7px 10px;}
+  .mega__cards { grid-template-columns: repeat(2, 112px);}
+}

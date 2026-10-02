@@ -350,4 +350,42 @@
       if (note) { note.hidden = false; note.setAttribute('tabindex', '-1'); note.focus(); }
     });
   });
+
+  /* ---- mega menus: one panel open at a time, an outside click closes it, and the eyewear cards' images load
+     on first open only (no extra bytes on an ordinary page view) ---- */
+  var navItems = [].slice.call(document.querySelectorAll('.menu > li.has-children'));
+  function closeOthers(keep) {
+    navItems.forEach(function (li) {
+      if (li === keep || !li.classList.contains('is-open')) return;
+      li.classList.remove('is-open');
+      var b = li.querySelector('.submenu-toggle'); if (b) b.setAttribute('aria-expanded', 'false');
+    });
+  }
+  navItems.forEach(function (li) {
+    var b = li.querySelector('.submenu-toggle');
+    if (b) b.addEventListener('click', function () {
+      if (li.classList.contains('is-open')) { li.classList.remove('is-closed'); closeOthers(li); }
+      else li.classList.add('is-closed');
+    });
+    function release() { if (!li.matches(':hover') && !li.contains(document.activeElement)) li.classList.remove('is-closed'); }
+    li.addEventListener('focusout', function () { setTimeout(release, 0); });
+    li.addEventListener('pointerleave', function () { setTimeout(release, 0); });
+    function loadImages() {
+      [].forEach.call(li.querySelectorAll('img[data-src]'), function (img) { img.src = img.getAttribute('data-src'); img.removeAttribute('data-src'); });
+    }
+    li.addEventListener('pointerenter', loadImages);
+    li.addEventListener('focusin', loadImages);
+  });
+  document.addEventListener('click', function (e) {
+    if (!(e.target.closest && e.target.closest('.menu > li.has-children'))) closeOthers(null);
+  });
+  document.addEventListener('keydown', function (e) {
+    if (e.key !== 'Escape') return;
+    navItems.forEach(function (li) {
+      if (!li.matches(':hover') && !li.contains(document.activeElement)) return;
+      li.classList.add('is-closed');
+      var b = li.querySelector('.submenu-toggle');
+      if (b && li.querySelector('.submenu').contains(document.activeElement)) b.focus();
+    });
+  });
 })();
